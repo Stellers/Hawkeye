@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <AssemblyName>Stellers.Hawkeye.Caching</AssemblyName>
+    <RootNamespace>Stellers.Hawkeye.Caching</RootNamespace>
+  </PropertyGroup>
+
+</Project>
