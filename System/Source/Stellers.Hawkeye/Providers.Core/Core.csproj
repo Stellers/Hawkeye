@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <AssemblyName>Stellers.Hawkeye.Data</AssemblyName>
-    <RootNamespace>Stellers.Hawkeye.Data</RootNamespace>
+    <AssemblyName>Stellers.Hawkeye.Providers.Core</AssemblyName>
+    <RootNamespace>Stellers.Hawkeye.Providers.Core</RootNamespace>
   </PropertyGroup>
 
 </Project>

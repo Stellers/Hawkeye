@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <AssemblyName>Stellers.Hawkeye.Providers.User</AssemblyName>
+    <RootNamespace>Stellers.Hawkeye.Providers.User</RootNamespace>
+  </PropertyGroup>
+
+</Project>

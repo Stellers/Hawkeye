@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <AssemblyName>Stellers.Hawkeye.Data.Base</AssemblyName>
+    <RootNamespace>Stellers.Hawkeye.Data.Base</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="EntityFramework\BaseRepositories\Interfaces\" />
+    <Folder Include="EntityFramework\Interfaces\" />
+    <Folder Include="EntityFramework\BaseImplementations\" />
+    <Folder Include="EntityFramework\BaseEntityConfigurations\" />
+  </ItemGroup>
+
+</Project>

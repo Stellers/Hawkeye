@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <RootNamespace>Stellers.Hawkeye.Providers.Contracts</RootNamespace>
+    <AssemblyName>Stellers.Hawkeye.Providers.Contracts</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Authorization\" />
+    <Folder Include="Management\" />
+    <Folder Include="Gateway\" />
+    <Folder Include="Core\" />
+    <Folder Include="User\" />
+  </ItemGroup>
+
+</Project>

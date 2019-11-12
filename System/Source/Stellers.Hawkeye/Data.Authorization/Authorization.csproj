@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <AssemblyName>Stellers.Hawkeye.Data.Authorization</AssemblyName>
+    <RootNamespace>Stellers.Hawkeye.Data.Authorization</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="DbContext\" />
+    <Folder Include="Map\" />
+    <Folder Include="DomainModel\" />
+    <Folder Include="Repositories\Interfaces\" />
+  </ItemGroup>
+
+</Project>

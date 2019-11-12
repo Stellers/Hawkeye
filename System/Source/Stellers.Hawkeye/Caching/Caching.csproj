@@ -6,4 +6,9 @@
     <RootNamespace>Stellers.Hawkeye.Caching</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+    <Folder Include="Providers\" />
+  </ItemGroup>
+
 </Project>
