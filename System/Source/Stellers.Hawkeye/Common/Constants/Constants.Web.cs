@@ -360,7 +360,10 @@ namespace Stellers.Hawkeye.Common.Constants
 			/// </summary>
 			public const string GroupProfile = "LGPROFILE";
 		}
-
+		
+		/// <summary>
+		/// 
+		/// </summary>
 		public struct Patterns
 		{
 			/// <summary>
@@ -384,5 +387,18 @@ namespace Stellers.Hawkeye.Common.Constants
 			/// </summary>
 			public const string Self = "self";
 		}
+
+		public struct StandardEnvironment
+		{
+			public const string Development = "DEVELOPMENT";
+
+			public const string Test = "TEST";
+
+			public const string Staging = "STAGING";
+
+			public const string Production = "PRODUCTION";
+		}
+
+
 	}
 }

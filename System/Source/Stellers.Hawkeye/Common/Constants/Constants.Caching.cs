@@ -27,7 +27,15 @@ namespace Stellers.Hawkeye.Common.Constants
 			/// </summary>
 			public struct Policies
 			{
-				
+				/// <summary>
+				/// The default cache policy (30 min, default priority)
+				/// </summary>
+				public const string Default = "Default";
+
+				/// <summary>
+				/// The user roles cache policy (7 days, non-removable)
+				/// </summary>
+				public const string UserRolesDependencies = "UserRoles";
 			}
 		}
 	}

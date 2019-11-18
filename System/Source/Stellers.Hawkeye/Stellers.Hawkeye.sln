@@ -43,17 +43,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{8AA6C68C-6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{DBBC4C2B-CED0-4FC2-B41C-EA41715F09E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base", "Data.Base\Base.csproj", "{612B99CA-49FF-47E0-90E3-639046296D63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Base", "Data.Base\Base.csproj", "{612B99CA-49FF-47E0-90E3-639046296D63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authorization", "Data.Authorization\Authorization.csproj", "{7717C3E5-A623-4EE3-BF10-75893FB64E0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authorization", "Data.Authorization\Authorization.csproj", "{7717C3E5-A623-4EE3-BF10-75893FB64E0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Data.Core\Core.csproj", "{238CD8E3-D142-4763-BE1E-73F97D4D57B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Data.Core\Core.csproj", "{238CD8E3-D142-4763-BE1E-73F97D4D57B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Management", "Data.Management\Management.csproj", "{4E24C33D-AE4D-4BD6-BF79-20ED9E1178B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Management", "Data.Management\Management.csproj", "{4E24C33D-AE4D-4BD6-BF79-20ED9E1178B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User", "Data.User\User.csproj", "{C6F0129F-21DB-4CFD-9E2B-396C0C81BC24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "User", "Data.User\User.csproj", "{C6F0129F-21DB-4CFD-9E2B-396C0C81BC24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.App", "Web.App\Web.App.csproj", "{13356FCA-6F86-41FF-867B-63F8D03C7957}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.App", "Web.App\Web.App.csproj", "{13356FCA-6F86-41FF-867B-63F8D03C7957}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifications", "Notifications\Notifications.csproj", "{616F7849-C443-4D82-B4DD-B3C140568E77}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -149,6 +151,10 @@ Global
 		{13356FCA-6F86-41FF-867B-63F8D03C7957}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13356FCA-6F86-41FF-867B-63F8D03C7957}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13356FCA-6F86-41FF-867B-63F8D03C7957}.Release|Any CPU.Build.0 = Release|Any CPU
+		{616F7849-C443-4D82-B4DD-B3C140568E77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{616F7849-C443-4D82-B4DD-B3C140568E77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{616F7849-C443-4D82-B4DD-B3C140568E77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{616F7849-C443-4D82-B4DD-B3C140568E77}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
