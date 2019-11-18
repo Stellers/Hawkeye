@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Configurations\" />
+  </ItemGroup>
+
 </Project>

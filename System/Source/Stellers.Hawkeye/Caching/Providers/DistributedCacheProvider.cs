@@ -1,32 +1,39 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Caching.Distributed;
 using Stellers.Hawkeye.Caching.Interfaces;
+using Stellers.Hawkeye.Common.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Stellers.Hawkeye.Caching.Providers
 {
 	/// <summary>
-	/// An ICacheProvider implementation that uses InMemoryCache for caching.
+	/// An ICacheProvider implementation that uses InMemory Distributed Cache for caching.
 	/// </summary>
 	/// 
-	public class InMemoryCacheProvider : ICacheProvider
+	public class DistributedCacheProvider : ICacheProvider
 	{
 		private readonly ICachePolicyProvider _cachePolicyProvider;
-		private static IMemoryCache _cache;
-		private object _lockObjectForCacheKeys;
-		private HashSet<String> _cacheKeys;
+		private static IDistributedCache _cache;
+
+		private readonly object _lockObject;
+		private readonly Dictionary<string, object> _lockObjectsForKeys;
+		private readonly object _lockObjectForCacheKeys;
+		private readonly HashSet<string> _cacheKeys;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="InMemoryCacheProvider" /> class.
 		/// </summary>
 		/// <param name="cachePolicyProvider">The cache policy provider.</param>
-		public InMemoryCacheProvider(IMemoryCache cache, ICachePolicyProvider cachePolicyProvider)
+		public DistributedCacheProvider(IDistributedCache distributedCache, ICachePolicyProvider cachePolicyProvider)
 		{
 			_cachePolicyProvider = cachePolicyProvider;
-			_cache = cache;
+			_cache = distributedCache;
 			_cacheKeys = new HashSet<string>();
+			_lockObject = new object();
+			_lockObjectsForKeys = new Dictionary<string, object>();
 			_lockObjectForCacheKeys = new object();
 		}
 
@@ -41,15 +48,33 @@ namespace Stellers.Hawkeye.Caching.Providers
 		/// <returns></returns>
 		public T GetOrSet<T>(string cacheKey, string cachePolicy, Func<T> seedFunction)
 		{
-			T item = _cache.GetOrCreate<T>(cacheKey, (cacheEntry) =>
+			var data = _cacheKeys.Any(x => x == cacheKey) ? (T)_cache.Get(cacheKey).ToObject() : default;
+			if (data != null)
 			{
-				var policy = _cachePolicyProvider.GetPolicy<MemoryCacheEntryOptions>(cachePolicy);
-				cacheEntry.SetOptions(policy);
-				return seedFunction();
-			});
+				return data;
+			}
 
-			AddOrRemoveCacheKey(cacheKey, true);
-			return item;
+			lock (GetLockObjectForaKey(cacheKey))
+			{
+				data = _cacheKeys.Any(x => x == cacheKey) ? (T)_cache.Get(cacheKey).ToObject() : default;
+				if (data != null)
+				{
+					return data;
+				}
+
+				var policy = _cachePolicyProvider.GetPolicy<DistributedCacheEntryOptions>(cachePolicy);
+				data = seedFunction();
+
+				if (data == null)
+				{
+					return data;
+				}
+
+				_cache.Set(cacheKey, data.ToByteArray(), policy);
+				AddOrRemoveCacheKey(cacheKey, true);
+			}
+
+			return data;
 		}
 
 		/// <summary>
@@ -63,15 +88,40 @@ namespace Stellers.Hawkeye.Caching.Providers
 		/// <returns></returns>
 		public async Task<T> GetOrSetAsync<T>(string cacheKey, string cachePolicy, Func<Task<T>> seedFunction)
 		{
-			T item = await _cache.GetOrCreateAsync<T>(cacheKey, async (cacheEntry) =>
+			try
 			{
-				var policy = _cachePolicyProvider.GetPolicy<MemoryCacheEntryOptions>(cachePolicy);
-				cacheEntry.SetOptions(policy);
-				return await seedFunction();
-			});
+				var data = _cacheKeys.Any(x => x == cacheKey) ? (T)_cache.Get(cacheKey).ToObject() : default;
+				if (data != null)
+				{
+					return data;
+				}
 
-			AddOrRemoveCacheKey(cacheKey, true);
-			return item;
+				var policy = _cachePolicyProvider.GetPolicy<DistributedCacheEntryOptions>(cachePolicy);
+				var seedData = await seedFunction().ConfigureAwait(true);
+
+				if (seedData == null)
+				{
+					return default;
+				}
+
+				lock (GetLockObjectForaKey(cacheKey))
+				{
+					data = _cacheKeys.Any(x => x == cacheKey) ? (T)_cache.Get(cacheKey).ToObject() : default;
+					if (data != null)
+					{
+						return data;
+					}
+
+					data = seedData;
+					_cache.Set(cacheKey, data.ToByteArray(), policy);
+					AddOrRemoveCacheKey(cacheKey, true);
+				}
+				return data;
+			}
+			catch (Exception)
+			{
+				throw;
+			}
 		}
 
 		/// <summary>
@@ -83,8 +133,8 @@ namespace Stellers.Hawkeye.Caching.Providers
 		/// <returns></returns>
 		public void Set(string cacheKey, string cachePolicy, object data)
 		{
-			var policy = _cachePolicyProvider.GetPolicy<MemoryCacheEntryOptions>(cachePolicy);
-			_cache.Set(cacheKey, data, policy);
+			var policy = _cachePolicyProvider.GetPolicy<DistributedCacheEntryOptions>(cachePolicy);
+			_cache.Set(cacheKey, data.ToByteArray(), policy);
 			AddOrRemoveCacheKey(cacheKey, true);
 		}
 
@@ -149,7 +199,7 @@ namespace Stellers.Hawkeye.Caching.Providers
 		/// <returns></returns>
 		public T Get<T>(string cacheKey)
 		{
-			return _cache.Get<T>(cacheKey);
+			return (T)_cache.Get(cacheKey).ToObject();
 		}
 
 		/// <summary>
@@ -160,7 +210,7 @@ namespace Stellers.Hawkeye.Caching.Providers
 		/// <returns></returns>
 		public async Task<T> GetAsync<T>(string cacheKey)
 		{
-			return await Task.FromResult(_cache.Get<T>(cacheKey));
+			return (T)(await _cache.GetAsync(cacheKey)).ToObject();
 		}
 
 		/// <summary>
@@ -172,7 +222,32 @@ namespace Stellers.Hawkeye.Caching.Providers
 		{
 			return _cacheKeys.Where(x => x.Contains(partialKey));
 		}
-		
+
+		/// <summary>
+		/// Gets the lock object for a key
+		/// </summary>
+		/// <param name="key">Cache Key</param>
+		private object GetLockObjectForaKey(string key)
+		{
+			if (_lockObjectsForKeys.TryGetValue(key, out object @object))
+			{
+				return @object;
+			}
+
+			lock (_lockObject)
+			{
+				if (_lockObjectsForKeys.TryGetValue(key, out @object))
+				{
+					return @object;
+				}
+
+				@object = new object();
+				_lockObjectsForKeys.Add(key, @object);
+
+				return @object;
+			}
+		}
+
 		/// <summary>
 		/// utility method to add or remove keys.
 		/// </summary>

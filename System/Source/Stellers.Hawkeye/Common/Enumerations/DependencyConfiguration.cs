@@ -23,5 +23,16 @@
 				List
 			}
 		}
+
+		public struct Cache
+		{
+			public enum ItemPriority
+			{
+				Low = 0,
+				Normal = 1,
+				High = 2,
+				NeverRemove = 3
+			}
+		}
 	}
 }

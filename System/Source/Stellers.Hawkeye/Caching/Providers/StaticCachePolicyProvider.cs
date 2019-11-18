@@ -1,6 +1,9 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using AutoMapper;
+using Microsoft.Extensions.Caching.Memory;
 using Stellers.Hawkeye.Caching.Interfaces;
+using Stellers.Hawkeye.Caching.Policy;
 using Stellers.Hawkeye.Common.Constants;
+using Stellers.Hawkeye.Common.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,34 +16,26 @@ namespace Stellers.Hawkeye.Caching.Providers
 	/// <seealso cref="Interfaces.ICachePolicyProvider" />
 	public class StaticCachePolicyProvider : ICachePolicyProvider
 	{
-		private class CacheConfig
-		{
-			public CacheItemPriority Priority { get; set; }
-			public TimeSpan? AbsoluteExpirationWindow { get; set; }
-			public TimeSpan? SlidingExpirationWindow { get; set; }
-
-			public CacheConfig(CacheItemPriority priority, TimeSpan? absoluteExpirationWindow, TimeSpan? slidingExpirationWindow)
-			{
-				Priority = priority;
-				AbsoluteExpirationWindow = absoluteExpirationWindow;
-				SlidingExpirationWindow = slidingExpirationWindow;
-			}
-		}
+		/// <summary>
+		/// 
+		/// </summary>
+		private readonly Dictionary<string, CachePolicy> _configs;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		private readonly Dictionary<string, CacheConfig> _configs;
+		readonly IMapper _mapper;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public StaticCachePolicyProvider()
+		public StaticCachePolicyProvider(IMapper mapper)
 		{
-			_configs = new Dictionary<string, CacheConfig>()
+			_mapper = mapper;
+			_configs = new Dictionary<string, CachePolicy>()
 			{
-				{ Constants.Caching.Policies.Default, new CacheConfig(CacheItemPriority.Low, new TimeSpan(0, 30, 0), null) },
-				{ Constants.Caching.Policies.UserRolesDependencies, new CacheConfig(CacheItemPriority.NeverRemove,  new TimeSpan(7, 0, 0, 0), null) }
+				{ Constants.Caching.Policies.Default, new CachePolicy(DependencyConfiguration.Cache.ItemPriority.Low, new TimeSpan(0, 30, 0), null) },
+				{ Constants.Caching.Policies.UserRolesDependencies, new CachePolicy(DependencyConfiguration.Cache.ItemPriority.NeverRemove,  new TimeSpan(7, 0, 0, 0), null) }
 			};
 		}
 
@@ -50,34 +45,15 @@ namespace Stellers.Hawkeye.Caching.Providers
 		/// <param name="name">The cache policy name.</param>
 		/// <returns>A new policy with correct dates relative to now</returns>
 		/// <exception cref="System.InvalidOperationException">If a policy with that name is not configured</exception>
-		public MemoryCacheEntryOptions GetPolicy(string name)
+		public T GetPolicy<T>(string name)
 		{
-			CacheConfig config;
-			if (_configs.TryGetValue(name, out config))
+			CachePolicy policy;
+			if (_configs.TryGetValue(name, out policy))
 			{
-				return BuildPolicy(config);
+				return _mapper.Map<T>(policy);
 			}
 
 			throw new InvalidOperationException($"Unknown cache policy '{name}'");
 		}
-
-		private static MemoryCacheEntryOptions BuildPolicy(CacheConfig config)
-		{
-			var policy = new MemoryCacheEntryOptions
-			{
-				Priority = config.Priority
-			};
-			if (config.AbsoluteExpirationWindow.HasValue)
-			{
-				policy.AbsoluteExpiration = DateTimeOffset.UtcNow.Add(config.AbsoluteExpirationWindow.Value);
-			}
-			if (config.SlidingExpirationWindow.HasValue)
-			{
-				policy.SlidingExpiration = config.SlidingExpirationWindow.Value;
-			}
-
-			return policy;
-		}
-
 	}
 }

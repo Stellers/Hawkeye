@@ -12,6 +12,6 @@ namespace Stellers.Hawkeye.Caching.Interfaces
 		/// </summary>
 		/// <param name="name">The name.</param>
 		/// <returns></returns>
-		MemoryCacheEntryOptions GetPolicy(string name);
+		T GetPolicy<T>(string name);
 	}
 }
